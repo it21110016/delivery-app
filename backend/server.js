@@ -12,18 +12,15 @@ const app = express();
 
 app.use(express.json());
 
-//method to show the rest api call in the console
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
 });
 
-// Use cors module and enable all CORS requests
 app.use(cors());
 
 app.use('/api/v1/locations', locationRoutes);
 
-//connect to db
 mongoose
     .connect(process.env.MONGO_URI, {dbName: process.env.DB_NAME})
     .then(() => {
@@ -39,5 +36,4 @@ mongoose
         console.log(Error); 
     });
 
-// export app
 module.exports = app;
