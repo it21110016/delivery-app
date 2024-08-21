@@ -110,8 +110,12 @@ const Form = () => {
       await axios.post('http://localhost:5000/api/v1/locations', formData);
       alert('Data submitted successfully!');
     } catch (error) {
-      console.error('Error submitting data', error);
-      alert('Failed to submit data');
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(`Failed to submit data: ${error.response.data.message}`);
+      } else {
+        console.error('Error submitting data', error);
+        alert('Failed to submit data');
+      }
     }
   };
 
@@ -136,6 +140,7 @@ const Form = () => {
             name="stateName"
             value={formData.stateName}
             onChange={(e) => setFormData({ ...formData, stateName: e.target.value })}
+            required
             className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
           >
             <option value="">Select a State</option>
@@ -155,6 +160,7 @@ const Form = () => {
               name="cityName"
               value={city.cityName}
               onChange={(e) => handleCityChange(cityIndex, e)}
+              required
               className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
             >
               <option value="">Select a City</option>
@@ -175,6 +181,7 @@ const Form = () => {
                   name="suburbName"
                   value={suburb.suburbName}
                   onChange={(e) => handleSuburbChange(cityIndex, suburbIndex, e)}
+                  required
                   className="mt-1 block w-full p-2 border-solid border-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
 
@@ -184,6 +191,7 @@ const Form = () => {
                   name="state"
                   value={suburb.state}
                   onChange={(e) => handleSuburbChange(cityIndex, suburbIndex, e)}
+                  required
                   className="mt-1 block w-full p-2 border-solid border-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
 
@@ -192,8 +200,10 @@ const Form = () => {
                   name="postalCodeType"
                   value={suburb.postalCodeType}
                   onChange={(e) => handleSuburbChange(cityIndex, suburbIndex, e)}
+                  required
                   className="mt-1 block w-full p-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 >
+                  <option value="">Select Postal code Type</option>
                   <option value="Single">Single</option>
                   <option value="Range">Range</option>
                   <option value="List">List</option>
@@ -205,6 +215,7 @@ const Form = () => {
                   name="postalCodes"
                   value={suburb.postalCodes}
                   onChange={(e) => handleSuburbChange(cityIndex, suburbIndex, e)}
+                  required
                   className="mt-1 mb-5 block w-full p-2 border-solid border-2 border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 />
 
