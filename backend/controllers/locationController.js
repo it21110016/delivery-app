@@ -1,15 +1,40 @@
 const Location = require('../models/locations');
 
-// Create new location
-const createLocation = async (req, res) => {
-    try {
-        const newLocation = new Location(req.body);
-        const savedLocation = await newLocation.save();
-        res.status(201).json(savedLocation);
-    } catch (err) {
-        res.status(400).json({ error: err.message });
+const postalCodeValidator = function(postalCodeType, value) {
+    if (postalCodeType === 'Single') {
+      return /^\d{4}$/.test(value);
+    } else if (postalCodeType === 'Range') {
+      return /^\d{4}-\d{4}$/.test(value);
+    } else if (postalCodeType === 'List') {
+      return /^(\d{4})(,\s?\d{4})*$/.test(value);
+    } else {
+      return false;
     }
-};
+  };
+  
+  const createLocation = async (req, res) => {
+      try {
+          const { cities } = req.body;
+  
+          // Validate postal codes
+          for (const city of cities) {
+              for (const suburb of city.suburbs) {
+                  const { postalCodeType, postalCodes } = suburb;
+                  if (!postalCodeValidator(postalCodeType, postalCodes)) {
+                      return res.status(400).json({ 
+                          message: `${postalCodes} is not a valid postal code for type ${postalCodeType}` 
+                      });
+                  }
+              }
+          }
+  
+          const newLocation = new Location(req.body);
+          const savedLocation = await newLocation.save();
+          res.status(201).json(savedLocation);
+      } catch (err) {
+          res.status(400).json({ error: err.message });
+      }
+  };
 
 // Get delivery cost by postal code
 const getCost = async (req, res) => {

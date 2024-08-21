@@ -1,19 +1,6 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
-const postalCodeValidator = function(value) {
-  const postalCodeType = this.postalCodeType;
-  if (postalCodeType === 'Single') {
-    return /^\d{4}$/.test(value);
-  } else if (postalCodeType === 'Range') {
-    return /^\d{4}-\d{4}$/.test(value);
-  } else if (postalCodeType === 'List') {
-    return /^(\d{4})(,\s?\d{4})*$/.test(value);
-  } else {
-    return false;
-  }
-};
-
 const LocationSchema = new mongoose.Schema({
   stateId: { type: String, default: uuidv4 },
   stateName: { type: String, required: true },
@@ -27,13 +14,9 @@ const LocationSchema = new mongoose.Schema({
           suburbName: { type: String, required: true },
           state: { type: String, required: true },
           postalCodeType: { type: String, required: true, enum: ['Single', 'Range', 'List'] },
-          postalCodes: { 
-            type: String, 
-            required: true, 
-            validate: {
-              validator: postalCodeValidator,
-              message: props => `${props.value} is not a valid postal code for type ${props.path.postalCodeType}`
-            }
+          postalCodes: {
+            type: String,
+            required: true,
           },
           delivery_costs: {
             thresholds: [
